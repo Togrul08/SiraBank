@@ -27,8 +27,8 @@ def save_data(data):
 
 
 def transfer(data):
-    sender = input("Pul gönderen")
-    receiver = input("Qebul eden istifadeçi")
+    sender = input("Pul gönderen: ")
+    receiver = input("Qebul eden istifadeçi: ")
 
 
     if sender not in data["accounts"]:
@@ -45,7 +45,7 @@ def transfer(data):
         return
 
 
-    amount = float(input("Köçürülecek mebleği seç"))
+    amount = float(input("Köçürülecek mebleği seç: "))
 
 
     if amount <= 0:

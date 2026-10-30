@@ -25,7 +25,52 @@ def save_data(data):
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 
+
+def transfer(data):
+    sender = input("Pul gönderen")
+    receiver = input("Qebul eden istifadeçi")
+
+
+    if sender not in data["accounts"]:
+        print("Gönderen istifadeçi tapılmadı")
+        return
+
+
+    if receiver not in data["accounts"]:
+        print("Qebul eden istifadeçi tapılmadı")
+        return
+
+    if sender == receiver:
+        print("Öz hesabıva pul ata bilmersen")
+        return
+
+
+    amount = float(input("Köçürülecek mebleği seç"))
+
+
+    if amount <= 0:
+        print("Pul menfi ve sıfır ola bilmez")
+        return
+
+
+    if amount > data["accounts"][sender]["balance"]:
+        print("Hörmetli abunetçi balansınızda kifayet qeder vesait yoxdur lütfen balansınızı atrırın")
+        return
+
+
+    data["accounts"][sender]["balance"] = data["accounts"][sender]["balance"] - amount
+    data["accounts"][receiver]["balance"] = data["accounts"][receiver]["balance"] + amount
+
+    save_data(data)
+
+
+    print("Köçürme uğurla tamamlandı")
+    print(f"Gönderenin yeni balansı: {data['accounts'][sender]['balance']}")
+    print(f"Qebul edenin yeni balansı: {data['accounts'][receiver]['balance']}")
+    
+
+
+
 if __name__ == "__main__":
     data = load_data()
-    save_data(data)
-    print("JSON melumatlarndi yuklendi musteri")
+    transfer(data)

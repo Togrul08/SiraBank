@@ -7,9 +7,9 @@ def load_data():
     if not os.path.exists(data_file):
         return {
             "accounts": {
-                "user01":{"Password":"Test123" , "balance":2500.00},
-                "user02":{"Password":"Test456" , "balance":1500.00},
-                "user03":{"Password":"Test789" , "balance":3000.00}
+                "user01":{"password":"Test@123" , "balance":2500.00},
+                "user02":{"password":"Test@456" , "balance":1500.00},
+                "user03":{"password":"Test@789" , "balance":3000.00}
             },
             "atmcash": 5000.00,
             "history": {},

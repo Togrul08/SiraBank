@@ -45,7 +45,12 @@ def transfer(data):
         return
 
 
-    amount = float(input("Köçürülecek mebleği seç: "))
+    try:
+        amount = float(input("Köçürülecek mebleği seç: "))
+    except ValueError:
+        print("Zehmet olmasa mebleği düzgün seçin")
+        return
+
 
 
     if amount <= 0:
@@ -56,6 +61,18 @@ def transfer(data):
     if amount > data["accounts"][sender]["balance"]:
         print("Hörmetli abunetçi balansınızda kifayet qeder vesait yoxdur lütfen balansınızı atrırın")
         return
+
+
+    while True:
+        confirm = input("Köçürmeni tesdiq edirsiniz?: (Yes/No)").lower().strip()
+
+        if confirm == "yes":
+            break
+        elif confirm == "no":
+            print("Köçürme leğv edildi")
+            return
+        else:
+            print("Yanlış seçim")
 
 
     data["accounts"][sender]["balance"] = data["accounts"][sender]["balance"] - amount

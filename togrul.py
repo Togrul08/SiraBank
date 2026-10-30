@@ -90,4 +90,17 @@ def transfer(data):
 
 if __name__ == "__main__":
     data = load_data()
-    transfer(data)
+    while True:
+        transfer(data)
+    
+
+
+        choice = input("\nYenidən köçürmə etmək istəyirsiniz? (Yes/No): ").lower().strip()
+
+
+        if choice == "no":
+            print("Proqramdan çıxılır.")
+            break
+        elif choice != "yes":
+            print("Yanlış seçim!")
+            break

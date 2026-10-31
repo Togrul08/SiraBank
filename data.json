@@ -2,18 +2,18 @@
     "accounts": {
         "user01": {
             "password": "Test@123",
-            "balance": 2500.00
+            "balance": 2500.0
         },
         "user02": {
             "password": "Test@456",
-            "balance": 1500.00
+            "balance": 1500.0
         },
         "user03": {
             "password": "Test@789",
-            "balance": 3000.00
+            "balance": 2900.0
         }
     },
-    "atmcash": 5000.00,
+    "atmcash": 4900.0,
     "history": {},
     "daily_transfers": {}
 }

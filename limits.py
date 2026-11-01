@@ -6,7 +6,7 @@ username = input("Enter username (user01, user02, user03): ")
 with open("data.json", "r", encoding="utf-8") as file:
     data = json.load(file)
 
-if username not in data["accounts"]
+if username not in data["accounts"]:
     print("User not found.")
 else:
     account = data["accounts"][username]

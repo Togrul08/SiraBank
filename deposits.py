@@ -30,10 +30,27 @@ else:
         if amount > remaining_limit:
             print("Rejected. Remaining limit for today:", remaining_limit, "AZN")
         else:
+            balance_before = account["balance"]
+
             account["balance"] = account["balance"] + amount
             account["deposited_today"] = account["deposited_today"] + amount
             data["atmcash"] = data["atmcash"] + amount
-            # dəyişiklikləri fayla yazırıq yoxsa proqram bağlananda itəcək
+            # tarixce ucun qeyd 
+            record = {
+                    "transaction_id": len(data["history"]) + 1,
+                    "username": username,
+                    "type": "deposit",
+                    "amount": amount,
+                    "date": today,
+                    "balance_before": balance_before,
+                    "balance_after": account["balance"],
+                    "other_account": None,
+                    "commission": 0
+                }
+            # siyahiya elave edirik
+            data["history"].append(record)
+
+            # deyisiklikleri fayla atirig 
             with open("data.json", "w", encoding="utf-8") as file:
                 json.dump(data, file, indent=4)
 

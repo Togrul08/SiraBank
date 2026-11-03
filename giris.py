@@ -65,10 +65,27 @@ while program_running:
     logged_in = False
 
     while True:
+        if user["blocked"]:
+            print("Maximum login attempts exceeded.")
+            print("Your card has been blocked.")
+            print("Please contact the bank administrator.")
+            break
+
+        if time.time() < user["lockout_until"]:
+            print("Too many failed login attempts.")
+            while time.time() < user["lockout_until"]:
+                left = math.ceil(user["lockout_until"] - time.time())
+                minutes = left // 60
+                seconds = left % 60
+                print("Please wait: " + str(minutes).zfill(2) + ":" + str(seconds).zfill(2))
+                time.sleep(1)
+            print("You may try again.")
+
         password = input("Password: ")
 
         if password == user["password"]:
             user["failed_attempts"] = 0
+            user["lockout_until"] = 0
             user["last_login"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open(FILE_NAME, "w") as f:
                 json.dump(data, f, indent=4)
@@ -77,6 +94,12 @@ while program_running:
         else:
             user["failed_attempts"] += 1
             print("Incorrect password. Attempt: " + str(user["failed_attempts"]) + "/" + str(MAX_ATTEMPTS))
+
+            if user["failed_attempts"] >= MAX_ATTEMPTS:
+                user["blocked"] = True
+            elif user["failed_attempts"] == 3:
+                user["lockout_until"] = time.time() + LOCK_SECONDS
+
             with open(FILE_NAME, "w") as f:
                 json.dump(data, f, indent=4)
 

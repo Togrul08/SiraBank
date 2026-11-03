@@ -106,5 +106,58 @@ while program_running:
     if not logged_in:
         continue
 
-    print("Login successful. Welcome, " + username + "!")
-    program_running = False
+    while True:
+        today = datetime.now().strftime("%Y-%m-%d")
+        if user["counter_date"] != today:
+            user["counter_date"] = today
+            user["deposited_today"] = 0.0
+            user["withdrawn_today"] = 0.0
+            user["transfer_count"] = 0
+            with open(FILE_NAME, "w") as f:
+                json.dump(data, f, indent=4)
+
+        print()
+        print("=" * 36)
+        print("        PYTHON BANKING SYSTEM")
+        print("=" * 36)
+        print("Welcome, " + username + "!")
+        print()
+        print("1. View Account Information")
+        print("2. Check Balance")
+        print("3. Deposit Money")
+        print("4. Withdraw Money")
+        print("5. Transfer Money")
+        print("6. Transaction History")
+        print("7. Daily Limits")
+        print("8. Change Password")
+        print("9. Logout")
+        print("0. Exit")
+        print("=" * 36)
+        choice = input("Select an option: ").strip()
+
+        if choice == "1":
+            if user["blocked"]:
+                status = "Blocked"
+            else:
+                status = "Active"
+            print()
+            print("Account Holder : " + username)
+            print("Account Number : " + user["account_number"])
+            print(f"Available Balance: {user['balance']:.2f} AZN")
+            print("Account Status: " + status)
+
+        elif choice == "2":
+            print()
+            print(f"Available Balance: {user['balance']:.2f} AZN")
+
+        elif choice == "9":
+            print("You have been logged out.")
+            break
+
+        elif choice == "0":
+            print("Goodbye!")
+            program_running = False
+            break
+
+        else:
+            print("Invalid option. Please choose a number from the menu.")

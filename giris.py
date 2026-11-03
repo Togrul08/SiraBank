@@ -150,6 +150,55 @@ while program_running:
             print()
             print(f"Available Balance: {user['balance']:.2f} AZN")
 
+        elif choice == "3":
+            remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
+            print()
+            print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+            text = input("Enter deposit amount: ").strip()
+
+            valid = True
+            if not text.replace(".", "", 1).isdecimal():
+                valid = False
+            elif "." in text and len(text.split(".")[1]) > 2:
+                valid = False
+            elif float(text) <= 0:
+                valid = False
+
+            if not valid:
+                print("Invalid amount. Enter a positive number with at most 2 decimal places.")
+            else:
+                amount = round(float(text), 2)
+
+                if amount > remaining:
+                    print()
+                    print(f"Deposited today: {user['deposited_today']:.2f} AZN")
+                    print(f"Requested deposit: {amount:.2f} AZN")
+                    print(f"Daily deposit maximum: {DAILY_DEPOSIT_LIMIT:.2f} AZN")
+                    print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+                    print()
+                    print("Deposit declined: daily limit would be exceeded.")
+                    print("Account balance and ATM cash remain unchanged.")
+                else:
+                    now_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    user["balance"] = round(user["balance"] + amount, 2)
+                    data["atm_cash"] = round(data["atm_cash"] + amount, 2)
+                    user["deposited_today"] = round(user["deposited_today"] + amount, 2)
+                    user["last_transaction"] = now_text
+                    user["history"].append({
+                        "time": now_text,
+                        "type": "Deposit",
+                        "amount": amount,
+                        "balance_after": user["balance"],
+                    })
+                    with open(FILE_NAME, "w") as f:
+                        json.dump(data, f, indent=4)
+
+                    remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
+                    print()
+                    print(f"Deposit successful: {amount:.2f} AZN")
+                    print(f"New balance: {user['balance']:.2f} AZN")
+                    print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+
         elif choice == "9":
             print("You have been logged out.")
             break

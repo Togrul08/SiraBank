@@ -35,12 +35,12 @@ def transfer(data):
     if sender not in data["accounts"]:
         print("Gönderen istifadeçi tapılmadı")
         return
-        today = datetime.now().strftime("%d.%m.%Y")
-        daily_transfers = data.setdefault("daily_transfers", {})
-        user_transfer = daily_transfers.get(sender, {})
-        if user_transfers.get(today, 0) >= 5:
-            print("Gündəlik köçürmə limitiniz bitib. Maksimum 5 köçürmə edə bilərsiniz.")
-            return
+    today = datetime.now().strftime("%d.%m.%Y")
+    daily_transfers = data.setdefault("daily_transfers", {})
+    user_transfers = daily_transfers.get(sender, {})
+    if user_transfers.get(today, 0) >= 5:
+        print("Gündəlik köçürmə limitiniz bitib. Maksimum 5 köçürmə edə bilərsiniz.")
+        return
 
     if receiver not in data["accounts"]:
         print("Qebul eden istifadeçi tapılmadı")
@@ -93,7 +93,7 @@ def transfer(data):
 
     data["daily_transfers"].setdefault(sender, {})
     data["daily_transfers"][sender][today] = data["daily_transfers"][sender].get(today, 0) + 1
-    
+
     save_data(data)
 
 
@@ -135,17 +135,6 @@ if __name__ == "__main__":
             print("Proqramdan çıxılır.")
             break
 
-        elif choice != "yes":
-            print("Yanlış seçim!")
-            break
-
-
-        choice = input("\nYenidən köçürmə etmək istəyirsiniz? (Yes/No): ").lower().strip()
-
-
-        if choice == "no":
-            print("Proqramdan çıxılır.")
-            break
         elif choice != "yes":
             print("Yanlış seçim!")
             break

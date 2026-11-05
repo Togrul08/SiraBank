@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 data_file = "data.json"
 
@@ -12,7 +13,7 @@ def load_data():
                 "user03":{"password":"Test@789" , "balance":3000.00}
             },
             "atmcash": 5000.00,
-            "history": {},
+            "history": [],
             "daily_transfers": {}
         }
 
@@ -84,7 +85,14 @@ def transfer(data):
     print("Köçürme uğurla tamamlandı")
     print(f"Gönderenin yeni balansı: {data['accounts'][sender]['balance']}")
     print(f"Qebul edenin yeni balansı: {data['accounts'][receiver]['balance']}")
-    
+
+
+data["history"].append({
+    "sender": sender,
+    "receiver": receiver,
+    "amount": amount,
+    "date": datetime.now().strftime("%d.%m.%Y %H:%M")
+})  
 
 
 

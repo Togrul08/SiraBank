@@ -95,6 +95,20 @@ data["history"].append({
 })  
 
 
+def view_history(data, current_user):
+    found = False 
+    for transaction in data["history"]:
+        if transaction["sender"] == current_user or transaction["receiver"] == current_user:
+            print("Göndərən:", transaction["sender"])
+            print("Qəbul edən:", transaction["receiver"])
+            print("Məbləğ:", transaction["amount"])
+            print("Tarix:", transaction["date"])
+
+            found = True 
+
+    if not found:
+        print("Emeliyyat tarixcesi boşdur")
+
 
 if __name__ == "__main__":
     data = load_data()

@@ -4,7 +4,7 @@ import os
 import time
 from datetime import datetime
 
-FILE_NAME = "bank_data.json"
+FILE_NAME = "data.json"
 DAILY_DEPOSIT_LIMIT = 2000.00
 LOCK_SECONDS = 60
 MAX_ATTEMPTS = 6
@@ -15,7 +15,7 @@ if os.path.exists(FILE_NAME):
     with open(FILE_NAME, "r") as f:
         data = json.load(f)
 else:
-    data = {"atm_cash": 10000.00, "users": {}}
+    data = {"atmcash": 5000.00, "accounts": {}, "history": [], "daily_transfers": {}}
 
     default_users = [
         ("user01", "Test@123", 2500.00, "10010001"),
@@ -24,7 +24,7 @@ else:
     ]
 
     for item in default_users:
-        data["users"][item[0]] = {
+        data["accounts"][item[0]] = {
             "password": item[1],
             "account_number": item[3],
             "balance": item[2],
@@ -39,6 +39,7 @@ else:
             "last_login": "Never",
             "last_transaction": "Never",
         }
+        data["daily_transfers"][item[0]] = {datetime.now().strftime("%d.%m.%Y"): 0}
 
     with open(FILE_NAME, "w") as f:
         json.dump(data, f, indent=4)
@@ -56,12 +57,12 @@ while program_running:
     if username.lower() == "exit":
         break
 
-    if username not in data["users"]:
+    if username not in data["accounts"]:
         input("Password: ")
         print("Invalid username or password.")
         continue
 
-    user = data["users"][username]
+    user = data["accounts"][username]
     logged_in = False
 
     while True:
@@ -181,7 +182,7 @@ while program_running:
                 else:
                     now_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     user["balance"] = round(user["balance"] + amount, 2)
-                    data["atm_cash"] = round(data["atm_cash"] + amount, 2)
+                    data["atmcash"] = round(data["atmcash"] + amount, 2)
                     user["deposited_today"] = round(user["deposited_today"] + amount, 2)
                     user["last_transaction"] = now_text
                     user["history"].append({

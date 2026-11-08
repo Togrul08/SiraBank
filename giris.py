@@ -15,7 +15,7 @@ if os.path.exists(FILE_NAME):
     with open(FILE_NAME, "r") as f:
         data = json.load(f)
 else:
-    data = {"atmcash": 10000.00, "accounts": {}, "history": [], "daily_transfers": {}}
+    data = {"atmcash": 5000.00, "accounts": {}, "history": [], "daily_transfers": {}}
 
     default_users = [
         ("user01", "Test@123", 2500.00, "10010001"),

@@ -1,30 +1,5 @@
-import json
-import os
 from datetime import datetime
-
-data_file = "data.json"
-
-def load_data():
-    if not os.path.exists(data_file):
-        return {
-            "accounts": {
-                "user01":{"password":"Test@123" , "balance":2500.00},
-                "user02":{"password":"Test@456" , "balance":1500.00},
-                "user03":{"password":"Test@789" , "balance":3000.00}
-            },
-            "atmcash": 5000.00,
-            "history": [],
-            "daily_transfers": {}
-        }
-
-    with open(data_file, "r", encoding="utf-8") as file:
-        return json.load(file)
-
-
-def save_data(data):
-    with open(data_file, "w", encoding="utf-8") as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
-
+from storage import load_data, save_data
 
 
 def transfer(data):
@@ -108,7 +83,7 @@ def transfer(data):
 def view_history(data, current_user):
     found = False 
     for transaction in data["history"]:
-        if transaction["sender"] == current_user or transaction["receiver"] == current_user:
+        if transaction.get("sender") == current_user or transaction.get("receiver") == current_user or transaction.get("username") == current_user:
             print("Göndərən:", transaction["sender"])
             print("Qəbul edən:", transaction["receiver"])
             print("Məbləğ:", transaction["amount"])

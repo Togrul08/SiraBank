@@ -199,6 +199,14 @@ while program_running:
                     print(f"New balance: {user['balance']:.2f} AZN")
                     print(f"Remaining deposit allowance: {remaining:.2f} AZN")
 
+        elif choice == "4":
+            print()
+            print("Withdraw is not implemented yet.")
+
+        elif choice == "5":
+            print()
+            print("Transfer is not implemented yet.")
+
         elif choice == "6":
             print()
             if len(user["history"]) == 0:
@@ -216,6 +224,26 @@ while program_running:
             print(f"Deposited today: {user['deposited_today']:.2f} AZN")
             print(f"Daily deposit maximum: {DAILY_DEPOSIT_LIMIT:.2f} AZN")
             print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+
+        elif choice == "8":
+            print()
+            old_password = input("Current password: ")
+            if old_password != user["password"]:
+                print("Current password is incorrect.")
+            else:
+                new1 = input("New password: ")
+                new2 = input("Repeat new password: ")
+                if len(new1) < 6:
+                    print("Password must be at least 6 characters.")
+                elif new1 == old_password:
+                    print("New password must be different from the old one.")
+                elif new1 != new2:
+                    print("Passwords do not match.")
+                else:
+                    user["password"] = new1
+                    with open(FILE_NAME, "w") as f:
+                        json.dump(data, f, indent=4)
+                    print("Password changed successfully.")
 
         elif choice == "9":
             print("You have been logged out.")

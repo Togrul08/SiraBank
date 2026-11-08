@@ -199,6 +199,24 @@ while program_running:
                     print(f"New balance: {user['balance']:.2f} AZN")
                     print(f"Remaining deposit allowance: {remaining:.2f} AZN")
 
+        elif choice == "6":
+            print()
+            if len(user["history"]) == 0:
+                print("No transactions yet.")
+            else:
+                print("Transaction History")
+                print("-" * 60)
+                for record in user["history"]:
+                    print(record["time"] + " | " + record["type"].ljust(10)
+                          + f" | {record['amount']:.2f} AZN | Balance: {record['balance_after']:.2f} AZN")
+
+        elif choice == "7":
+            remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
+            print()
+            print(f"Deposited today: {user['deposited_today']:.2f} AZN")
+            print(f"Daily deposit maximum: {DAILY_DEPOSIT_LIMIT:.2f} AZN")
+            print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+
         elif choice == "9":
             print("You have been logged out.")
             break

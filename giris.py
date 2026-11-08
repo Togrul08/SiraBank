@@ -15,7 +15,7 @@ if os.path.exists(FILE_NAME):
     with open(FILE_NAME, "r") as f:
         data = json.load(f)
 else:
-    data = {"atmcash": 5000.00, "accounts": {}, "history": [], "daily_transfers": {}}
+    data = {"atmcash": 10000.00, "accounts": {}, "history": [], "daily_transfers": {}}
 
     default_users = [
         ("user01", "Test@123", 2500.00, "10010001"),
@@ -34,7 +34,6 @@ else:
             "counter_date": today,
             "deposited_today": 0.0,
             "withdrawn_today": 0.0,
-            "transfer_count": 0,
             "history": [],
             "last_login": "Never",
             "last_transaction": "Never",
@@ -113,7 +112,6 @@ while program_running:
             user["counter_date"] = today
             user["deposited_today"] = 0.0
             user["withdrawn_today"] = 0.0
-            user["transfer_count"] = 0
             with open(FILE_NAME, "w") as f:
                 json.dump(data, f, indent=4)
 

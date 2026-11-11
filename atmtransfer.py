@@ -11,15 +11,12 @@ if username not in data["accounts"]:
 else:
     account = data["accounts"][username]
     
-    # 2. Date check: Reset daily counter if a new day has started
     today = str(datetime.date.today())
     if account.get("counter_date") != today:
         account["counter_date"] = today
         account["withdrawn_today"] = 0.0
 
     print("Current Balance:", account["balance"], "AZN")
-    
-    # 3. Input protection: Prevent crash if user types letters instead of numbers
     try:
         amount = float(input("Enter withdrawal amount (AZN): "))
     except ValueError:

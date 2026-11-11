@@ -40,7 +40,7 @@ def transfer(data):
 
 
     if amount > data["accounts"][sender]["balance"]:
-        print("Hörmetli abunetçi balansınızda kifayet qeder vesait yoxdur lütfen balansınızı atrırın")
+        print("Hörmetli abunetçi balansınızda kifayet qeder vesait yoxdur lütfen balansınızı atrırınız!!!")
         return
 
 

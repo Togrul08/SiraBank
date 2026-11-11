@@ -8,15 +8,11 @@
             "blocked": false,
             "failed_attempts": 0,
             "lockout_until": 0,
-            "counter_date": "Never",
-            "deposited_today": 0.0,
-            "withdrawn_today": 50.0,
-            "history":[],
-            "counter_date": "Never",
+            "counter_date": "2026-11-11",
             "deposited_today": 0.0,
             "withdrawn_today": 0.0,
             "history": [],
-            "last_login": "Never",
+            "last_login": "2026-11-11 22:04:04",
             "last_transaction": "Never"
         },
         "user02": {

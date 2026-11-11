@@ -1,19 +1,25 @@
-import json
 import math
 import os
 import time
 from datetime import datetime
 
+from atmtransfer import withdraw
+from deposits import deposit
+from limits import show_limits
+from storage import load_data, save_data
+from togrul import transfer, view_history
+
+# data.json həmişə bu faylın yanındakı qovluqda tapılsın
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 FILE_NAME = "data.json"
-DAILY_DEPOSIT_LIMIT = 2000.00
 LOCK_SECONDS = 60
 MAX_ATTEMPTS = 6
 
 today = datetime.now().strftime("%Y-%m-%d")
 
 if os.path.exists(FILE_NAME):
-    with open(FILE_NAME, "r") as f:
-        data = json.load(f)
+    data = load_data()
 else:
     data = {"atmcash": 5000.00, "accounts": {}, "history": [], "daily_transfers": {}}
 
@@ -40,9 +46,24 @@ else:
         }
         data["daily_transfers"][item[0]] = {datetime.now().strftime("%d.%m.%Y"): 0}
 
-    with open(FILE_NAME, "w") as f:
-        json.dump(data, f, indent=4)
+    save_data(data)
     print("First run: demo accounts created.")
+
+# köhnə / natamam data.json üçün çatışmayan sahələri tamamlayırıq
+data.setdefault("atmcash", 5000.00)
+data.setdefault("history", [])
+data.setdefault("daily_transfers", {})
+for index, (name, account) in enumerate(data["accounts"].items(), start=1):
+    account.setdefault("account_number", f"1001{index:04d}")
+    account.setdefault("blocked", False)
+    account.setdefault("failed_attempts", 0)
+    account.setdefault("lockout_until", 0)
+    account.setdefault("counter_date", "Never")
+    account.setdefault("deposited_today", 0.0)
+    account.setdefault("withdrawn_today", 0.0)
+    account.setdefault("history", [])
+    account.setdefault("last_login", "Never")
+    account.setdefault("last_transaction", "Never")
 
 program_running = True
 
@@ -87,8 +108,7 @@ while program_running:
             user["failed_attempts"] = 0
             user["lockout_until"] = 0
             user["last_login"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            with open(FILE_NAME, "w") as f:
-                json.dump(data, f, indent=4)
+            save_data(data)
             logged_in = True
             break
         else:
@@ -100,20 +120,15 @@ while program_running:
             elif user["failed_attempts"] == 3:
                 user["lockout_until"] = time.time() + LOCK_SECONDS
 
-            with open(FILE_NAME, "w") as f:
-                json.dump(data, f, indent=4)
+            save_data(data)
 
     if not logged_in:
         continue
 
     while True:
-        today = datetime.now().strftime("%Y-%m-%d")
-        if user["counter_date"] != today:
-            user["counter_date"] = today
-            user["deposited_today"] = 0.0
-            user["withdrawn_today"] = 0.0
-            with open(FILE_NAME, "w") as f:
-                json.dump(data, f, indent=4)
+        # Qeyd: gündəlik sayğacların sıfırlanması indi deposits.py (deposit_date)
+        # və atmtransfer.py (counter_date) daxilində edilir. Burda ayrıca sıfırlama
+        # olsaydı, gün ərzində depozit limiti səhvən sıfırlanardı.
 
         print()
         print("=" * 36)
@@ -150,79 +165,24 @@ while program_running:
             print(f"Available Balance: {user['balance']:.2f} AZN")
 
         elif choice == "3":
-            remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
             print()
-            print(f"Remaining deposit allowance: {remaining:.2f} AZN")
-            text = input("Enter deposit amount: ").strip()
-
-            valid = True
-            if not text.replace(".", "", 1).isdecimal():
-                valid = False
-            elif "." in text and len(text.split(".")[1]) > 2:
-                valid = False
-            elif float(text) <= 0:
-                valid = False
-
-            if not valid:
-                print("Invalid amount. Enter a positive number with at most 2 decimal places.")
-            else:
-                amount = round(float(text), 2)
-
-                if amount > remaining:
-                    print()
-                    print(f"Deposited today: {user['deposited_today']:.2f} AZN")
-                    print(f"Requested deposit: {amount:.2f} AZN")
-                    print(f"Daily deposit maximum: {DAILY_DEPOSIT_LIMIT:.2f} AZN")
-                    print(f"Remaining deposit allowance: {remaining:.2f} AZN")
-                    print()
-                    print("Deposit declined: daily limit would be exceeded.")
-                    print("Account balance and ATM cash remain unchanged.")
-                else:
-                    now_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    user["balance"] = round(user["balance"] + amount, 2)
-                    data["atmcash"] = round(data["atmcash"] + amount, 2)
-                    user["deposited_today"] = round(user["deposited_today"] + amount, 2)
-                    user["last_transaction"] = now_text
-                    user["history"].append({
-                        "time": now_text,
-                        "type": "Deposit",
-                        "amount": amount,
-                        "balance_after": user["balance"],
-                    })
-                    with open(FILE_NAME, "w") as f:
-                        json.dump(data, f, indent=4)
-
-                    remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
-                    print()
-                    print(f"Deposit successful: {amount:.2f} AZN")
-                    print(f"New balance: {user['balance']:.2f} AZN")
-                    print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+            deposit(data, username)            # deposits.py
 
         elif choice == "4":
             print()
-            print("Withdraw is not implemented yet.")
+            withdraw(data, username)           # atmtransfer.py
 
         elif choice == "5":
             print()
-            print("Transfer is not implemented yet.")
+            transfer(data, username)           # togrul.py
 
         elif choice == "6":
             print()
-            if len(user["history"]) == 0:
-                print("No transactions yet.")
-            else:
-                print("Transaction History")
-                print("-" * 60)
-                for record in user["history"]:
-                    print(record["time"] + " | " + record["type"].ljust(10)
-                          + f" | {record['amount']:.2f} AZN | Balance: {record['balance_after']:.2f} AZN")
+            view_history(data, username)       # togrul.py
 
         elif choice == "7":
-            remaining = round(DAILY_DEPOSIT_LIMIT - user["deposited_today"], 2)
             print()
-            print(f"Deposited today: {user['deposited_today']:.2f} AZN")
-            print(f"Daily deposit maximum: {DAILY_DEPOSIT_LIMIT:.2f} AZN")
-            print(f"Remaining deposit allowance: {remaining:.2f} AZN")
+            show_limits(data, username)        # limits.py
 
         elif choice == "8":
             print()
@@ -240,8 +200,7 @@ while program_running:
                     print("Passwords do not match.")
                 else:
                     user["password"] = new1
-                    with open(FILE_NAME, "w") as f:
-                        json.dump(data, f, indent=4)
+                    save_data(data)
                     print("Password changed successfully.")
 
         elif choice == "9":

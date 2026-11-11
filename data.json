@@ -31,7 +31,7 @@
         },
         "user03": {
             "password": "Test@789",
-            "balance": 2500.0,
+            "balance": 3000.0,
             "account_number": "10010003",
             "blocked": false,
             "failed_attempts": 0,

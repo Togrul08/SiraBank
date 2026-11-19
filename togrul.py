@@ -4,8 +4,6 @@ from storage import load_data, save_data
 
 
 def transfer(data, sender=None):
-    # giris.py-dan çağırılanda göndərən artıq məlumdur (daxil olmuş istifadəçi);
-    # fayl tək başına işlədilərsə, əvvəlki kimi soruşulur
     if sender is None:
         sender = input("Pul gönderen: ")
     receiver = input("Qebul eden istifadeçi: ")
@@ -100,7 +98,7 @@ def view_history(data, current_user):
       - togrul.py        -> data["history"]  (sender / receiver / amount / date)
       - atmtransfer.py   -> hesabın öz history siyahısı (time / type / amount / commission)
     """
-    entries = []   # (vaxt_obyekti, vaxt_yazısı, ad, işarə, məbləğ, komissiya, balans_sonra)
+    entries = [] 
 
     for transaction in data.get("history", []):
         if transaction.get("username") == current_user:

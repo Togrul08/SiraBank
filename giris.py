@@ -9,7 +9,6 @@ from limits import show_limits
 from storage import load_data, save_data
 from togrul import transfer, view_history
 
-# data.json həmişə bu faylın yanındakı qovluqda tapılsın
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 FILE_NAME = "data.json"
@@ -49,7 +48,6 @@ else:
     save_data(data)
     print("First run: demo accounts created.")
 
-# köhnə / natamam data.json üçün çatışmayan sahələri tamamlayırıq
 data.setdefault("atmcash", 5000.00)
 data.setdefault("history", [])
 data.setdefault("daily_transfers", {})
@@ -126,9 +124,6 @@ while program_running:
         continue
 
     while True:
-        # Qeyd: gündəlik sayğacların sıfırlanması indi deposits.py (deposit_date)
-        # və atmtransfer.py (counter_date) daxilində edilir. Burda ayrıca sıfırlama
-        # olsaydı, gün ərzində depozit limiti səhvən sıfırlanardı.
 
         print()
         print("=" * 36)
